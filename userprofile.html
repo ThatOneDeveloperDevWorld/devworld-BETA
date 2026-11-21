@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creators - dev world search</title>
+    <title>search - dev world</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -18,23 +21,21 @@
             background-position: center;
             background-repeat: no-repeat;
             color: #212529;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Cherry Bomb One', cursive, sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 20px 10px;
+            padding-bottom: 60px;
             overflow-x: hidden;
         }
 
         .clouds-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 200%;
-            height: 200%;
+            top: 0; left: 0;
+            width: 200%; height: 200%;
             background-image: url('https://github.com/ThatOneDeveloperDevWorld/devworldsource/blob/main/Untitled338_20260812133205.png?raw=true');
             background-repeat: repeat-x;
             background-size: contain;
@@ -47,32 +48,70 @@
             position: relative;
             z-index: 2;
             width: 100%;
-            max-width: 420px;
+            max-width: 850px;
             background: #ffffff;
             border: 4px solid #000000;
             border-radius: 20px;
             box-shadow: 0 8px 0px #000000;
-            padding: 25px 20px;
+            padding: 30px 15px;
             text-align: left;
-            max-height: 90vh;
+            transition: background-color 0.2s ease;
+        }
+
+        .profile-pfp-container {
+            width: 90px;
+            height: 90px;
+            border-radius: 10px;
+            border: 3px solid #000;
+            overflow: hidden;
+            margin: 0 auto 12px auto;
+            background: #f8f9fa;
+            box-shadow: 2px 2px 0px #000;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-pfp-img, .profile-pfp-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .logo-img {
-            max-width: 140px;
+            max-width: 100px;
             width: 100%;
             height: auto;
             display: block;
-            margin: 0 auto 10px auto;
-            filter: drop-shadow(3px 3px 0px #000);
+            margin: 0 auto 12px auto;
+            filter: drop-shadow(2px 2px 0px #000);
         }
 
         .header-title {
             text-align: center;
-            font-size: 20px;
-            font-weight: 900;
+            font-size: 22px;
             margin: 0 0 5px 0;
+        }
+
+        /* Badge Styling */
+        .badges-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .user-badge {
+            background-color: #343a40;
+            color: #ffffff;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1.5px solid #000;
+            letter-spacing: 0.5px;
+            text-transform: lowercase;
+            box-shadow: 1px 1px 0px #000;
         }
 
         .uid-badge {
@@ -82,8 +121,8 @@
             background: #e9ecef;
             border: 1px dashed #000;
             padding: 4px 8px;
-            border-radius: 6px;
-            margin-bottom: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
             word-break: break-all;
         }
 
@@ -92,71 +131,72 @@
             justify-content: space-around;
             background: #f8f9fa;
             border: 2px solid #000;
-            border-radius: 8px;
-            padding: 6px;
-            margin-bottom: 10px;
-            font-size: 12px;
-            font-weight: 800;
+            border-radius: 10px;
+            padding: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
             text-align: center;
+            box-shadow: 2px 2px 0px #000;
         }
 
         .social-stats span {
-            font-weight: 600;
-            font-size: 11px;
+            font-size: 12px;
             color: #555;
+            display: block;
         }
 
         .label-title {
-            font-size: 11px;
-            font-weight: 800;
+            font-size: 13px;
             display: block;
             margin-bottom: 4px;
         }
 
         .info-box {
             width: 100%;
-            padding: 8px 12px;
+            padding: 12px;
             border: 2px solid #000;
-            border-radius: 8px;
+            border-radius: 10px;
             background: #f8f9fa;
-            margin-bottom: 10px;
-            font-weight: 600;
-            font-size: 13px;
-            min-height: 35px;
+            margin-bottom: 15px;
+            font-size: 14px;
             word-break: break-word;
+            min-height: 45px;
         }
 
         .section-header {
-            font-size: 12px;
-            font-weight: 900;
-            margin: 2px 0 6px 0;
+            font-size: 16px;
             text-transform: uppercase;
+            margin-bottom: 12px;
+            background: #ffffff;
+            border: 2px solid #000;
+            padding: 6px 10px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 0px #000;
+            display: inline-block;
         }
 
         .games-container {
-            flex: 1;
-            overflow-y: auto;
-            max-height: 120px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            margin-bottom: 10px;
-            padding-right: 4px;
+            gap: 10px;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
         }
 
         .game-item-card {
-            background: #fdfdfd;
+            background: #ffffff;
             border: 2px solid #000;
-            padding: 6px 10px;
-            border-radius: 8px;
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 2px 2px 0px #000;
             display: flex;
             justify-content: space-between;
             align-items: center;
             text-decoration: none;
             color: #000;
-            font-weight: bold;
-            font-size: 12px;
-            box-shadow: 2px 2px 0px #000;
+            font-size: 14px;
             transition: transform 0.1s ease;
         }
 
@@ -165,20 +205,47 @@
             transform: translate(-1px, -1px);
         }
 
+        .ban-warning-container {
+            background: #fff3cd;
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            padding: 12px;
+            text-align: center;
+            margin-bottom: 15px;
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        .ban-warning-banner {
+            max-width: 60px;
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto 6px auto;
+        }
+
+        .ban-warning-text {
+            font-size: 12px;
+            font-weight: bold;
+            color: #000;
+            margin: 0;
+            line-height: 1.4;
+            font-family: Arial, sans-serif;
+        }
+
         .btn-custom {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 2px solid #000;
             border-radius: 10px;
-            font-weight: 800;
-            font-size: 13px;
+            font-size: 15px;
             cursor: pointer;
             box-shadow: 3px 3px 0px #000;
             transition: transform 0.1s ease;
             text-decoration: none;
             display: block;
             text-align: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            font-family: 'Cherry Bomb One', cursive, sans-serif;
         }
 
         .btn-custom:active {
@@ -189,21 +256,76 @@
         .btn-follow { background: #55ff55; color: #000; }
         .btn-unfollow { background: #ffbe0b; color: #000; }
         .btn-back { background: #ff595e; color: #fff; margin-bottom: 0; }
+
+        /* Admin Management Sections on Profile */
+        .admin-badge-section {
+            border-top: 3px dashed #000;
+            margin-top: 25px;
+            padding-top: 20px;
+            text-align: left;
+        }
+        .admin-badge-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #000;
+            border-radius: 10px;
+            background: #f8f9fa;
+            font-size: 14px;
+            font-family: 'Cherry Bomb One', cursive, sans-serif;
+            outline: none;
+        }
+        .badge-chip {
+            background: #e9ecef;
+            border: 1.5px solid #000;
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .badge-remove-btn {
+            background: #ff595e;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            padding: 1px 5px;
+        }
     </style>
+    <script src="i18n.js"></script>
+    <script src="dwcomments.js"></script>
+    <script src="gamemenu.js"></script>
 </head>
 <body onload="initProfile()">
 
     <div class="clouds-bg"></div>
 
-    <div class="main-container">
-        <img src="Devworldlogobeta.png" alt="Dev World Logo" class="logo-img">
+    <div id="main-profile-container" class="main-container">
+        <!-- Profile Picture / Video Display Container -->
+        <div id="profile-pfp-container" class="profile-pfp-container">
+            <img id="profile-pfp-display" src="people.png" alt="Profile Picture" class="profile-pfp-img" onerror="this.src='people.png'">
+        </div>
+
+        <img src="Devworldlogobeta.png" alt="Dev World Logo" class="logo-img" onerror="this.style.display='none'">
         
         <h3 id="profile-username" class="header-title">Loading User...</h3>
+        
+        <!-- Badges Display Area -->
+        <div id="profile-badges-container" class="badges-container"></div>
+
         <div id="uid-display" class="uid-badge">ID: Loading...</div>
         
         <div class="social-stats">
             <div><div id="followers-count">0</div><span>Followers</span></div>
             <div><div id="following-count">0</div><span>Following</span></div>
+            <div><div id="dev-points-display">100</div><span>Dev Points</span></div>
         </div>
 
         <label class="label-title">BIO</label>
@@ -211,12 +333,31 @@
         
         <button id="follow-btn" class="btn-custom btn-follow" onclick="toggleFollow()">Follow</button>
 
-        <div class="section-header">Published Games</div>
+        <div class="section-header" style="margin-top: 15px;">Published Games</div>
         <div class="games-container" id="user-games-list">
-            <div style="font-size: 12px; color: #666; text-align: center; padding: 10px;">Loading games...</div>
+            <div style="font-size: 13px; color: #666; text-align: center; padding: 10px;">Loading games...</div>
         </div>
 
-        <a href="home.html" class="btn-custom btn-back">Back</a>
+        <!-- Admin Badge Management Panel (Visible only when logged in as admin UID ccZGPg7EzbNphnL0du3msMFIpjJ3) -->
+        <div id="admin-badge-management" class="admin-badge-section" style="display: none;">
+            <label class="label-title" style="color: #c92a2a;">ADMIN: MANAGE USER BADGES</label>
+            <div id="current-user-badges-list" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;"></div>
+            <div class="admin-badge-row">
+                <input type="text" id="new-badge-input" class="input-field" placeholder="e.g. developer, moderator" style="margin-bottom: 0;">
+                <button class="btn-custom" style="width: auto; margin-bottom: 0; padding: 0 16px; background: #a1ffe4;" onclick="adminAddBadge()">Add Badge</button>
+            </div>
+        </div>
+
+        <!-- Admin Dev Points Management Panel (Visible only when logged in as admin UID ccZGPg7EzbNphnL0du3msMFIpjJ3) -->
+        <div id="admin-devpoints-management" class="admin-badge-section" style="display: none;">
+            <label class="label-title" style="color: #c92a2a;">ADMIN: MANAGE DEV POINTS</label>
+            <div class="admin-badge-row">
+                <input type="number" id="admin-devpoints-input" class="input-field" placeholder="New Dev Points (0-100)" style="margin-bottom: 0;">
+                <button class="btn-custom" style="width: auto; margin-bottom: 0; padding: 0 16px; background: #ffbe0b;" onclick="adminUpdateDevPoints()">Set Points</button>
+            </div>
+        </div>
+
+        <a href="home.html" class="btn-custom btn-back" style="margin-top: 20px;">Back</a>
     </div>
 
     <script>
@@ -234,10 +375,31 @@
         }
 
         const db = firebase.firestore();
+        db.settings({ experimentalForceLongPolling: true });
+
+        const ADMIN_UID = "ccZGPg7EzbNphnL0du3msMFIpjJ3";
         let targetUserId = "";
+        let targetUserData = null;
         let targetUsername = "";
         let isFollowing = false;
         let profileUnsubscribe = null;
+
+        function renderProfileMedia(url) {
+            const container = document.getElementById("profile-pfp-container");
+            const trimmedUrl = url ? url.trim() : "";
+
+            if (trimmedUrl !== "" && (trimmedUrl.toLowerCase().endsWith(".mp4") || trimmedUrl.includes(".mp4?"))) {
+                container.innerHTML = `
+                    <video autoplay loop muted playsinline class="profile-pfp-video" onerror="this.outerHTML='<img id=\\'profile-pfp-display\\' src=\\'people.png\\' alt=\\'Profile Picture\\' class=\\'profile-pfp-img\\' onerror=\\'this.src=\\'people.png\\'\\'>'">
+                        <source src="${trimmedUrl}" type="video/mp4">
+                    </video>
+                `;
+            } else {
+                container.innerHTML = `
+                    <img id="profile-pfp-display" src="${trimmedUrl !== "" ? trimmedUrl : "people.png"}" alt="Profile Picture" class="profile-pfp-img" onerror="this.src='people.png'">
+                `;
+            }
+        }
 
         async function initProfile() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -286,9 +448,14 @@
                     return;
                 }
 
-                // Check auth and determine follow status right away
+                // Check auth state for follow button & admin panels visibility
                 firebase.auth().onAuthStateChanged(async (currentUser) => {
                     if (currentUser) {
+                        if (currentUser.uid === ADMIN_UID) {
+                            document.getElementById("admin-badge-management").style.display = "block";
+                            document.getElementById("admin-devpoints-management").style.display = "block";
+                        }
+
                         if (currentUser.uid === targetUserId) {
                             document.getElementById("follow-btn").style.display = "none";
                             return;
@@ -313,67 +480,181 @@
 
                 // Real-time listener for target user profile
                 if (profileUnsubscribe) profileUnsubscribe();
-                profileUnsubscribe = db.collection("users").doc(targetUserId).onSnapshot((docSnap) => {
+                profileUnsubscribe = db.collection("users").doc(targetUserId).onSnapshot(async (docSnap) => {
                     if (docSnap.exists) {
-                        const data = docSnap.data();
-                        targetUsername = data.Username || data.username || "DevWorldUser";
+                        targetUserData = docSnap.data();
+                        targetUsername = targetUserData.Username || targetUserData.username || "DevWorldUser";
                         
                         document.getElementById("profile-username").innerText = targetUsername;
                         document.getElementById("uid-display").innerText = "ID: " + targetUserId;
-                        document.getElementById("profile-bio").innerText = data.Bio || data.bio || "No bio added yet.";
+                        document.getElementById("profile-bio").innerText = targetUserData.Bio || targetUserData.bio || "No bio added yet.";
 
-                        const followersList = Array.isArray(data.followers) ? data.followers : (Array.isArray(data.Followers) ? data.Followers : []);
-                        const followingList = Array.isArray(data.following) ? data.following : (Array.isArray(data.Following) ? data.Following : []);
+                        if (targetUserData.profileColor) {
+                            document.getElementById("main-profile-container").style.backgroundColor = targetUserData.profileColor;
+                        }
+
+                        // Render profile picture or .mp4 video
+                        renderProfileMedia(targetUserData.pfpUrl);
+
+                        const followersList = Array.isArray(targetUserData.followers) ? targetUserData.followers : (Array.isArray(targetUserData.Followers) ? targetUserData.Followers : []);
+                        const followingList = Array.isArray(targetUserData.following) ? targetUserData.following : (Array.isArray(targetUserData.Following) ? targetUserData.Following : []);
                         
                         document.getElementById("followers-count").innerText = followersList.length;
                         document.getElementById("following-count").innerText = followingList.length;
+
+                        // Display Dev Points in social stats and prefill input
+                        const devPoints = targetUserData.devPoints !== undefined ? targetUserData.devPoints : 100;
+                        document.getElementById("dev-points-display").innerText = devPoints;
+                        document.getElementById("admin-devpoints-input").value = devPoints;
+
+                        // Render badges
+                        renderBadgesUI(targetUserData.badges || []);
+                        renderAdminBadgesManager(targetUserData.badges || []);
+
+                        const isBanned = targetUserData.isBanned === true || devPoints <= 79;
+
+                        const gamesListEl = document.getElementById("user-games-list");
+
+                        if (isBanned) {
+                            gamesListEl.innerHTML = `
+                                <div class="ban-warning-container">
+                                    <img src="bannedwarning.png" alt="Banned Warning" class="ban-warning-banner" onerror="this.src='https://github.com/ThatOneDeveloperDevWorld/devworldsource/blob/main/logo1.png?raw=true'">
+                                    <p class="ban-warning-text" data-i18n-html="user-banned">this user has been banned. they can no longer use <b>dev world</b> on this account.</p>
+                                </div>
+                            `;
+                        } else {
+                            gamesListEl.innerHTML = "";
+                            const allGamesSnapshot = await db.collection("games").get();
+                            let matchedGames = [];
+
+                            allGamesSnapshot.forEach(gDoc => {
+                                const game = gDoc.data();
+                                const gameAuthorId = game.authorId || game.creatorId || game.userId;
+                                if (gameAuthorId === targetUserId) {
+                                    matchedGames.push({ id: gDoc.id, ...game });
+                                }
+                            });
+
+                            if (matchedGames.length === 0) {
+                                gamesListEl.innerHTML = '<div style="font-size: 13px; color: #666; text-align: center; padding: 10px;">No games published yet.</div>';
+                                return;
+                            }
+
+                            matchedGames.forEach(game => {
+                                const card = document.createElement('a');
+                                card.className = 'game-item-card';
+                                card.href = `play.html?id=${game.id}`;
+                                
+                                const titleSpan = document.createElement('span');
+                                titleSpan.innerText = game.title || "Untitled Level";
+
+                                const badgeSpan = document.createElement('span');
+                                badgeSpan.style.fontSize = '11px';
+                                badgeSpan.style.background = '#e9ecef';
+                                badgeSpan.style.border = '1.5px solid #000';
+                                badgeSpan.style.padding = '3px 8px';
+                                badgeSpan.style.borderRadius = '6px';
+                                badgeSpan.innerText = 'Play ▶';
+
+                                card.appendChild(titleSpan);
+                                card.appendChild(badgeSpan);
+                                gamesListEl.appendChild(card);
+                            });
+                        }
                     }
-                });
-
-                // Load user games
-                const gamesListEl = document.getElementById("user-games-list");
-                gamesListEl.innerHTML = "";
-
-                const allGamesSnapshot = await db.collection("games").get();
-                let matchedGames = [];
-
-                allGamesSnapshot.forEach(doc => {
-                    const game = doc.data();
-                    const gameAuthorId = game.authorId || game.creatorId || game.userId;
-                    if (gameAuthorId === targetUserId) {
-                        matchedGames.push({ id: doc.id, ...game });
-                    }
-                });
-
-                if (matchedGames.length === 0) {
-                    gamesListEl.innerHTML = '<div style="font-size: 12px; color: #666; text-align: center; padding: 10px;">No games published yet.</div>';
-                    return;
-                }
-
-                matchedGames.forEach(game => {
-                    const card = document.createElement('a');
-                    card.className = 'game-item-card';
-                    card.href = `play.html?id=${game.id}`;
-                    
-                    const titleSpan = document.createElement('span');
-                    titleSpan.innerText = game.title || "Untitled Level";
-
-                    const badgeSpan = document.createElement('span');
-                    badgeSpan.style.fontSize = '10px';
-                    badgeSpan.style.background = '#e9ecef';
-                    badgeSpan.style.padding = '2px 6px';
-                    badgeSpan.style.borderRadius = '4px';
-                    badgeSpan.innerText = 'Play ▶';
-
-                    card.appendChild(titleSpan);
-                    card.appendChild(badgeSpan);
-                    gamesListEl.appendChild(card);
                 });
 
             } catch (error) {
                 console.error("Error loading user profile:", error);
                 document.getElementById("profile-username").innerText = "Error";
                 document.getElementById("profile-bio").innerText = "Could not fetch user record.";
+            }
+        }
+
+        function renderBadgesUI(badges) {
+            const container = document.getElementById("profile-badges-container");
+            container.innerHTML = "";
+            badges.forEach(badge => {
+                const badgeEl = document.createElement("span");
+                badgeEl.className = "user-badge";
+                badgeEl.innerText = badge;
+                container.appendChild(badgeEl);
+            });
+        }
+
+        function renderAdminBadgesManager(badges) {
+            const listEl = document.getElementById("current-user-badges-list");
+            listEl.innerHTML = "";
+            if (badges.length === 0) {
+                listEl.innerHTML = '<span style="font-size:12px; color:#666;">No badges assigned to this user.</span>';
+                return;
+            }
+            badges.forEach((badge, index) => {
+                const chip = document.createElement("div");
+                chip.className = "badge-chip";
+                chip.innerHTML = `<span>${badge}</span><button class="badge-remove-btn" onclick="adminRemoveBadge(${index})">X</button>`;
+                listEl.appendChild(chip);
+            });
+        }
+
+        async function adminAddBadge() {
+            const input = document.getElementById("new-badge-input");
+            const val = input.value.trim().toLowerCase();
+            if (!val || !targetUserId) return;
+
+            if (!targetUserData.badges) targetUserData.badges = [];
+            if (targetUserData.badges.includes(val)) {
+                alert("User already has this badge.");
+                return;
+            }
+
+            targetUserData.badges.push(val);
+            try {
+                await db.collection("users").doc(targetUserId).update({ badges: targetUserData.badges });
+                input.value = "";
+                renderBadgesUI(targetUserData.badges);
+                renderAdminBadgesManager(targetUserData.badges);
+            } catch (err) {
+                alert("Error adding badge: " + err.message);
+            }
+        }
+
+        async function adminRemoveBadge(index) {
+            if (!targetUserId || !targetUserData.badges) return;
+
+            targetUserData.badges.splice(index, 1);
+            try {
+                await db.collection("users").doc(targetUserId).update({ badges: targetUserData.badges });
+                renderBadgesUI(targetUserData.badges);
+                renderAdminBadgesManager(targetUserData.badges);
+            } catch (err) {
+                alert("Error removing badge: " + err.message);
+            }
+        }
+
+        async function adminUpdateDevPoints() {
+            const input = document.getElementById("admin-devpoints-input");
+            const newPoints = parseInt(input.value, 10);
+
+            if (isNaN(newPoints) || newPoints < 0 || newPoints > 100) {
+                alert("Please enter a valid Dev Points value between 0 and 100.");
+                return;
+            }
+
+            if (!targetUserId) return;
+
+            try {
+                let updatePayload = { devPoints: newPoints };
+                if (newPoints <= 79) {
+                    updatePayload.isBanned = true;
+                } else {
+                    updatePayload.isBanned = false; // unban if points are restored above 79
+                }
+
+                await db.collection("users").doc(targetUserId).update(updatePayload);
+                alert(`Successfully updated Dev Points to ${newPoints}.`);
+            } catch (err) {
+                alert("Error updating Dev Points: " + err.message);
             }
         }
 
@@ -414,7 +695,6 @@
                     alert(`you have followed ${targetUsername}`);
                 }
 
-                // Explicitly merge data to force creation of the fields if they completely missed them before
                 await myRef.set({ following: myFollowing }, { merge: true });
                 await targetRef.set({ followers: targetFollowers }, { merge: true });
 

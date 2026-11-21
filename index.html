@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dev World v0.2.0</title>
+    <title>Dev World v0.3.5</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -129,6 +129,7 @@
             image-rendering: pixelated;
         }
     </style>
+    <script src="i18n.js"></script>
 </head>
 <body>
 
@@ -136,8 +137,8 @@
         <div class="clouds-bg"></div>
 
         <div class="top-container">
-            <img src="https://github.com/ThatOneDeveloperDevWorld/devworldsource/blob/main/logo1.png?raw=true" alt="Dev World Logo" class="logo-img" onerror="this.src='Devworldlogobeta.png'">
-            <div class="version-text">v0.2.0</div>
+            <img src="https://github.com/ThatOneDeveloperDevWorld/devworldsource/blob/main/logo1.png?raw=true" alt="Dev World Logo" class="logo-img" onerror="this.src='bannedwarning.png'">
+            <div class="version-text">v0.3.5</div>
         </div>
 
         <div class="center-container">
@@ -353,8 +354,8 @@
                         return userRef.get().then((doc) => {
                             if (!doc.exists) {
                                 return userRef.set({
-                                    Username: user.displayName || "DevWorldUser",
-                                    Bio: "this user didnt leave a bio for you to read.",
+                                    Username: user.displayName || "User",
+                                    Bio: "Nothing :/",
                                     Projects: [],
                                     isBanned: false
                                 });

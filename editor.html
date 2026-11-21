@@ -269,6 +269,8 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            max-height: 100%;
+            overflow-y: auto;
         }
 
         /* Preview card mimicking home.html game-card-square */
@@ -307,6 +309,7 @@
             color: #555;
         }
     </style>
+    <script src="i18n.js"></script>
 </head>
 <body onload="initStudio()">
 
@@ -322,6 +325,7 @@
         </div>
 
         <div>
+            <div id="fork-notice" style="display: none; font-size: 12px; color: #38b000; margin-bottom: 4px;"></div>
             <label class="label-title">Game Title</label>
             <input type="text" id="game-title-input" class="input-field" placeholder="Name your awesome level..." oninput="updatePreviewTitle()">
         </div>
@@ -368,6 +372,19 @@
                 <label class="label-title">Game Icon</label>
                 <input type="text" id="game-icon-input" class="input-field" placeholder="link here..." oninput="validateGameIconUrl()">
                 <span id="game-icon-error" style="font-size: 10px; color: #ff595e; display: none;">Invalid format! Only .gif, .png, .jpg, and .jpeg are allowed.</span>
+            </div>
+
+            <div>
+                <label class="label-title">Game Banner</label>
+                <input type="text" id="game-banner-input" class="input-field" placeholder="link here..." oninput="validateGameBannerUrl()">
+                <span id="game-banner-error" style="font-size: 10px; color: #ff595e; display: none;">Invalid format! Only .gif, .png, .jpg, and .jpeg are allowed.</span>
+                <img id="preview-banner-img" src="" alt="Banner Preview" style="display: none; width: 100%; height: 80px; object-fit: cover; border: 2px solid #000; border-radius: 8px; margin-top: 6px;" onerror="this.style.display='none'">
+            </div>
+
+            <div>
+                <label class="label-title">Game Description</label>
+                <textarea id="game-description-input" class="input-field" maxlength="200" rows="3" style="resize: none;" placeholder="describe your game..." oninput="updateDescriptionCount()"></textarea>
+                <span id="game-description-count" style="font-size: 10px; color: #666;">0/200</span>
             </div>
 
             <!-- Home-style Preview -->
@@ -450,6 +467,7 @@
         let currentTileType = 'grass';
         let isDrawing = false;
         let levelData = { playerStart: null, blocks: [] };
+        let forkSource = null; // set when this level is a fork of another published game
 
         function showToast(msg) {
             const t = document.getElementById('toast');
@@ -494,6 +512,37 @@
             return isValid;
         }
 
+        function updateDescriptionCount() {
+            const box = document.getElementById('game-description-input');
+            document.getElementById('game-description-count').textContent = box.value.length + "/200";
+        }
+
+        function validateGameBannerUrl() {
+            const input = document.getElementById('game-banner-input').value.trim();
+            const errSpan = document.getElementById('game-banner-error');
+            const previewImg = document.getElementById('preview-banner-img');
+
+            if (!input) {
+                errSpan.style.display = 'none';
+                previewImg.style.display = 'none';
+                previewImg.removeAttribute('src');
+                return true;
+            }
+
+            const clean = input.split('?')[0].split('#')[0].toLowerCase();
+            const isValid = ALLOWED_EXTENSIONS.some(ext => clean.endsWith(ext));
+            errSpan.style.display = isValid ? 'none' : 'block';
+
+            if (isValid) {
+                previewImg.style.display = 'block';
+                previewImg.src = input;
+            } else {
+                previewImg.style.display = 'none';
+                previewImg.removeAttribute('src');
+            }
+            return isValid;
+        }
+
         function validateCustomTileUrl() {
             const input = document.getElementById('custom-tile-url').value.trim();
             const errSpan = document.getElementById('tile-url-error');
@@ -531,6 +580,69 @@
         function initStudio() {
             switchCategory();
             buildGrid();
+            loadForkSource();
+        }
+
+        // editor.html?fork=<gameId> -> preload a copy of that game; credit goes to the ORIGINAL creator
+        async function loadForkSource() {
+            const forkId = new URLSearchParams(window.location.search).get('fork');
+            if (!forkId) return;
+            try {
+                const doc = await db.collection("games").doc(forkId).get();
+                if (!doc.exists) throw new Error("missing");
+                const src = doc.data();
+
+                // forking a fork keeps pointing at the original game/creator
+                if (src.forkedFrom && src.forkedFrom.creatorId) {
+                    forkSource = {
+                        gameId: src.forkedFrom.gameId || forkId,
+                        creatorId: src.forkedFrom.creatorId,
+                        title: src.forkedFrom.title || ""
+                    };
+                } else {
+                    forkSource = {
+                        gameId: forkId,
+                        creatorId: src.authorId || src.creatorId || null,
+                        title: src.title || ""
+                    };
+                }
+
+                const content = JSON.parse(JSON.stringify(src.content || {}));
+                levelData = {
+                    playerStart: content.playerStart || null,
+                    blocks: Array.isArray(content.blocks) ? content.blocks : []
+                };
+                catalog.custom = JSON.parse(JSON.stringify(src.customTiles || []));
+
+                let size = parseInt(src.cols) || 16;
+                if (size < 8) size = 8;
+                if (size > 32) size = 32;
+                currentSize = size;
+                document.getElementById('grid-size').value = size;
+
+                document.getElementById('bg-color').value = src.bgColor || "#87CEEB";
+                changeBackground();
+                document.getElementById('game-title-input').value = (src.title || DWLang.t("Untitled")) + " (Fork)";
+                updatePreviewTitle();
+                document.getElementById('game-icon-input').value = src.iconUrl || "";
+                validateGameIconUrl();
+                document.getElementById('game-banner-input').value = src.bannerUrl || "";
+                validateGameBannerUrl();
+                document.getElementById('game-description-input').value = (src.description || "").slice(0, 200);
+                updateDescriptionCount();
+
+                switchCategory();
+                buildGrid();
+
+                const notice = document.getElementById('fork-notice');
+                notice.innerText = DWLang.t("Forking:") + " " + (src.title || DWLang.t("Untitled"));
+                notice.style.display = 'block';
+                showToast("Fork loaded!");
+            } catch (err) {
+                console.error("Fork load error:", err);
+                forkSource = null;
+                alert("Could not load the game to fork.");
+            }
         }
 
         function switchCategory() {
@@ -693,11 +805,21 @@
                 return;
             }
 
+            const bannerUrl = document.getElementById('game-banner-input').value.trim();
+            if (bannerUrl && !validateGameBannerUrl()) {
+                alert("Please fix your game banner URL or leave it blank.");
+                return;
+            }
+
+            const description = document.getElementById('game-description-input').value.trim().slice(0, 200);
+
             let authorId = currentUser ? currentUser.uid : "anonymous_dev";
 
             const gamePayload = {
                 title: title,
                 iconUrl: iconUrl || null,
+                bannerUrl: bannerUrl || null,
+                description: description || null,
                 authorId: authorId,
                 creatorId: authorId,
                 genre: "Platformer",
@@ -709,6 +831,14 @@
                 customTiles: catalog.custom,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
+
+            if (forkSource) {
+                gamePayload.forkedFrom = {
+                    gameId: forkSource.gameId,
+                    creatorId: forkSource.creatorId || null,
+                    title: forkSource.title || ""
+                };
+            }
 
             try {
                 showToast("Publishing...");

@@ -87,6 +87,27 @@
             color: #ffffff;
         }
 
+        .hud-right {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            pointer-events: auto;
+        }
+
+        .btn-fork {
+            background: #38b000;
+            color: white;
+            border: 2px solid #000;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-family: 'Cherry Bomb One', cursive, sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 2px 2px 0px #000;
+            pointer-events: auto;
+            text-shadow: none;
+        }
+
         .engine-version {
             font-size: 12px;
             color: #ffffff;
@@ -179,6 +200,7 @@
             box-shadow: 0 2px 0px #000;
         }
     </style>
+    <script src="i18n.js"></script>
 </head>
 <body>
 
@@ -187,9 +209,13 @@
             <div class="hud-left">
                 <span id="level-title-display">Loading Level...</span>
                 <a id="creator-display" class="creator-link" style="display: none;">By Unknown</a>
+                <a id="fork-display" class="creator-link" style="display: none;"></a>
                 <span class="engine-version">v0.1.32.8</span>
             </div>
-            <a href="home.html" class="btn-exit">Exit</a>
+            <div class="hud-right">
+                <button id="fork-btn" class="btn-fork" style="display: none;">Fork</button>
+                <a href="home.html" class="btn-exit">Exit</a>
+            </div>
         </div>
         <canvas id="gameCanvas" width="800" height="800"></canvas>
     </div>
@@ -413,11 +439,40 @@
                         if (!creatorName) creatorName = "Unknown Creator";
 
                         const creatorEl = document.getElementById('creator-display');
-                        creatorEl.innerText = `By ${creatorName}`;
+                        creatorEl.innerText = `${DWLang.t('By')} ${creatorName}`;
                         creatorEl.style.display = 'block';
                         if (creatorId) {
                             creatorEl.onclick = () => {
                                 window.location.href = `userprofile.html?id=${creatorId}`;
+                            };
+                        }
+
+                        // Fork button: opens this level in the editor as a new copy
+                        const forkBtn = document.getElementById('fork-btn');
+                        forkBtn.style.display = 'inline-block';
+                        forkBtn.onclick = () => {
+                            window.location.href = `editor.html?fork=${encodeURIComponent(gameId)}`;
+                        };
+
+                        // "Forked from <original creator>" line under the creator text
+                        if (data.forkedFrom && data.forkedFrom.creatorId) {
+                            const origId = data.forkedFrom.creatorId;
+                            let origName = "";
+                            try {
+                                const origDoc = await db.collection("users").doc(origId).get();
+                                if (origDoc.exists) {
+                                    const oData = origDoc.data();
+                                    origName = oData.Username || oData.username || "";
+                                }
+                            } catch (e) {
+                                console.warn("Could not fetch original creator details", e);
+                            }
+                            if (!origName) origName = DWLang.t("Unknown Creator");
+                            const forkEl = document.getElementById('fork-display');
+                            forkEl.innerText = `${DWLang.t('Forked from')} ${origName}`;
+                            forkEl.style.display = 'block';
+                            forkEl.onclick = () => {
+                                window.location.href = `userprofile.html?id=${origId}`;
                             };
                         }
 

@@ -1,4 +1,4 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -275,7 +275,7 @@
             gap: 8px;
         }
 
-        .like-btn, .report-btn {
+        .like-btn, .report-btn, .admin-delete-post-btn {
             display: flex;
             align-items: center;
             gap: 5px;
@@ -290,7 +290,8 @@
 
         .like-btn { background: #e9ecef; }
         .report-btn { background: #ffcc00; color: #000; }
-        .report-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0px #000; }
+        .admin-delete-post-btn { background: #ff595e; color: #fff; }
+        .report-btn:active, .admin-delete-post-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0px #000; }
 
         .like-icon {
             width: 16px;
@@ -298,29 +299,8 @@
             object-fit: contain;
         }
 
-        .comments-section {
-            margin-top: 5px;
-            border-top: 2px dashed #000;
-            padding-top: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
 
-        .comment-item {
-            background: #f8f9fa;
-            border: 2px solid #000;
-            border-radius: 8px;
-            padding: 8px 10px;
-            font-size: 12px;
-            box-shadow: 1.5px 1.5px 0px #000;
-        }
 
-        .comment-input-row {
-            display: flex;
-            gap: 8px;
-            margin-top: 5px;
-        }
 
         .loading-text {
             text-align: center;
@@ -412,6 +392,9 @@
             transform: scale(0.92);
         }
     </style>
+    <script src="i18n.js"></script>
+    <script src="gamemenu.js"></script>
+    <script src="dwcomments.js"></script>
 </head>
 <body onload="initPostsPage()">
 
@@ -477,6 +460,19 @@
         </div>
     </div>
 
+    <!-- Admin Delete Post Modal -->
+    <div class="modal-overlay" id="adminDeletePostModal">
+        <div class="modal-box">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 class="modal-title" style="margin:0; color:#ff595e;">Admin Delete Post</h3>
+                <button class="btn-cancel" onclick="closeAdminDeleteModal()">X</button>
+            </div>
+            <p style="font-size:12px; margin:0;">Enter how many Dev Points to deduct from the author:</p>
+            <input type="number" id="deduct-points-input" class="input-field" value="10" min="0" max="100">
+            <button class="btn-upload" style="background:#ff595e; color:#fff;" onclick="confirmAdminDeletePost()">Delete Post & Deduct Points</button>
+        </div>
+    </div>
+
     <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
         <a href="wallet.html" class="nav-item">
@@ -529,6 +525,7 @@
         let lastVisibleDoc = null;
         let isInitialLoad = true;
         let currentReportingPost = null;
+        let currentAdminDeletingPost = null;
 
         async function getCreatorUsername(authorId) {
             if (!authorId) return "Unknown";
@@ -583,6 +580,17 @@
         function closeReportModal() {
             document.getElementById('reportPostModal').style.display = 'none';
             currentReportingPost = null;
+        }
+
+        function openAdminDeleteModal(postId, authorId) {
+            currentAdminDeletingPost = { postId, authorId };
+            document.getElementById('deduct-points-input').value = '10';
+            document.getElementById('adminDeletePostModal').style.display = 'flex';
+        }
+
+        function closeAdminDeleteModal() {
+            document.getElementById('adminDeletePostModal').style.display = 'none';
+            currentAdminDeletingPost = null;
         }
 
         async function submitReport() {
@@ -761,52 +769,47 @@
             }
         }
 
-        async function submitComment(postId) {
-            if (!activeAuthUser) {
-                alert("You must be logged in to comment.");
+        // Admin post deletion handling custom dev points deduction and ban flag
+        async function confirmAdminDeletePost() {
+            if (!currentAdminDeletingPost) return;
+            const adminUid = 'ccZGPg7EzbNphnL0du3msMFIpjJ3';
+            if (!activeAuthUser || activeAuthUser.uid !== adminUid) {
+                alert("Unauthorized action.");
+                closeAdminDeleteModal();
                 return;
             }
 
-            const commentInput = document.getElementById(`comment-input-${postId}`);
-            if (!commentInput) return;
+            const deductAmount = parseInt(document.getElementById('deduct-points-input').value, 10);
+            if (isNaN(deductAmount) || deductAmount < 0) {
+                alert("Please enter a valid number of points.");
+                return;
+            }
 
-            const commentText = commentInput.value.trim();
-            if (!commentText) return;
+            const { postId, authorId } = currentAdminDeletingPost;
 
             try {
-                await db.collection("posts").doc(postId).collection("comments").add({
-                    authorId: activeAuthUser.uid,
-                    text: commentText,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                await db.collection("posts").doc(postId).delete();
+
+                const targetUserRef = db.collection("users").doc(authorId);
+                await db.runTransaction(async (transaction) => {
+                    const userDoc = await transaction.get(targetUserRef);
+                    let currentPoints = 100;
+                    if (userDoc.exists && userDoc.data().devPoints !== undefined) {
+                        currentPoints = userDoc.data().devPoints;
+                    }
+                    const newPoints = Math.max(0, currentPoints - deductAmount);
+                    let updatePayload = { devPoints: newPoints };
+                    if (newPoints <= 79) {
+                        updatePayload.isBanned = true;
+                    }
+                    transaction.set(targetUserRef, updatePayload, { merge: true });
                 });
 
-                commentInput.value = '';
-                refreshCommentsUI(postId);
+                alert(`Post deleted by admin. Author Dev Points reduced by ${deductAmount}.`);
+                closeAdminDeleteModal();
+                resetAndLoadPosts();
             } catch (err) {
-                console.error("Error adding comment:", err);
-                alert("Failed to post comment: " + err.message);
-            }
-        }
-
-        async function refreshCommentsUI(postId) {
-            const listContainer = document.getElementById(`comments-list-${postId}`);
-            if (!listContainer) return;
-
-            try {
-                const commentSnap = await db.collection("posts").doc(postId).collection("comments").orderBy("createdAt", "asc").get();
-                listContainer.innerHTML = '';
-                if (!commentSnap.empty) {
-                    for (let cDoc of commentSnap.docs) {
-                        const cData = cDoc.data();
-                        const cAuthorName = await getCreatorUsername(cData.authorId);
-                        const commentItem = document.createElement('div');
-                        commentItem.className = 'comment-item';
-                        commentItem.innerHTML = `<strong>@${cAuthorName}:</strong> ${cData.text}`;
-                        listContainer.appendChild(commentItem);
-                    }
-                }
-            } catch (commentErr) {
-                console.error("Error refreshing comments:", commentErr);
+                alert("Failed to delete post: " + err.message);
             }
         }
 
@@ -852,6 +855,9 @@
                 }
 
                 lastVisibleDoc = snapshot.docs[snapshot.docs.length - 1];
+
+                const adminUid = 'ccZGPg7EzbNphnL0du3msMFIpjJ3';
+                const isAdmin = activeAuthUser && activeAuthUser.uid === adminUid;
 
                 for (let docSnap of snapshot.docs) {
                     const post = docSnap.data();
@@ -901,50 +907,29 @@
                     likeBtn.innerHTML = `<img src="like.png" alt="Like" class="like-icon"> ${likesCount}`;
                     likeBtn.onclick = () => toggleLike(postId);
 
+                    actionsDiv.appendChild(likeBtn);
+
+                    if (isAdmin) {
+                        const adminDeleteBtn = document.createElement('button');
+                        adminDeleteBtn.className = 'admin-delete-post-btn';
+                        adminDeleteBtn.innerText = 'Delete Post';
+                        adminDeleteBtn.onclick = () => openAdminDeleteModal(postId, post.authorId);
+                        actionsDiv.appendChild(adminDeleteBtn);
+                    }
+
                     const reportBtn = document.createElement('button');
                     reportBtn.className = 'report-btn';
                     reportBtn.innerText = 'Report';
                     reportBtn.onclick = () => openReportModal(postId, post.text, post.authorId, authorName);
 
-                    actionsDiv.appendChild(likeBtn);
                     actionsDiv.appendChild(reportBtn);
                     postCard.appendChild(actionsDiv);
 
                     const commentsSection = document.createElement('div');
-                    commentsSection.className = 'comments-section';
-
-                    const commentsListDiv = document.createElement('div');
-                    commentsListDiv.id = `comments-list-${postId}`;
-                    commentsListDiv.style.display = 'flex';
-                    commentsListDiv.style.flexDirection = 'column';
-                    commentsListDiv.style.gap = '8px';
-
-                    try {
-                        const commentSnap = await db.collection("posts").doc(postId).collection("comments").orderBy("createdAt", "asc").get();
-                        if (!commentSnap.empty) {
-                            for (let cDoc of commentSnap.docs) {
-                                const cData = cDoc.data();
-                                const cAuthorName = await getCreatorUsername(cData.authorId);
-                                const commentItem = document.createElement('div');
-                                commentItem.className = 'comment-item';
-                                commentItem.innerHTML = `<strong>@${cAuthorName}:</strong> ${cData.text}`;
-                                commentsListDiv.appendChild(commentItem);
-                            }
-                        }
-                    } catch (commentErr) {
-                        console.error("Error loading comments:", commentErr);
-                    }
-
-                    commentsSection.appendChild(commentsListDiv);
-
-                    const commentInputRow = document.createElement('div');
-                    commentInputRow.className = 'comment-input-row';
-                    commentInputRow.innerHTML = `
-                        <input type="text" id="comment-input-${postId}" class="input-field" placeholder="Write a comment..." style="padding:6px 10px; font-size:12px;">
-                        <button onclick="submitComment('${postId}')" style="padding:6px 12px; border:2px solid #000; border-radius:8px; font-size:12px; cursor:pointer; background:#5ec8ff; color:#000; box-shadow:2px 2px 0px #000; font-family:'Cherry Bomb One', cursive, sans-serif;">Reply</button>
-                    `;
-                    commentsSection.appendChild(commentInputRow);
                     postCard.appendChild(commentsSection);
+                    DWComments.mount(commentsSection, {
+                        collection: () => db.collection("posts").doc(postId).collection("comments")
+                    });
 
                     container.appendChild(postCard);
                 }
