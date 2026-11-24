@@ -2,5 +2,7 @@
   "name": "dev-world-create-and-play",
   "version": "0.2.0",
   "description": "Dev World Create And Play",
-  "scripts": {}
+  "scripts": {
+    "build:content": "node build-content.js"
+  }
 }

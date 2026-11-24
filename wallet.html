@@ -240,6 +240,7 @@
         .btn-confirm { background: #55ff55; color: #000; }
     </style>
     <script src="i18n.js"></script>
+    <script src="dwcoins.js"></script>
 </head>
 <body onload="initWallet()">
 
@@ -316,21 +317,8 @@
                 }
 
                 try {
-                    const userDoc = await db.collection("users").doc(user.uid).get();
-                    let coins = 0;
-
-                    if (userDoc.exists && userDoc.data().devCoins !== undefined) {
-                        coins = userDoc.data().devCoins;
-                    } else if (userDoc.exists && userDoc.data().coins !== undefined) {
-                        coins = userDoc.data().coins;
-                    } else {
-                        const gamesSnap = await db.collection("games").where("authorId", "==", user.uid).get();
-                        gamesSnap.forEach(doc => {
-                            const data = doc.data();
-                            coins += (data.visits || 0);
-                        });
-                    }
-
+                    // one shared place decides where the balance lives (see dwcoins.js)
+                    const coins = await DWCoins.getBalance(db, user.uid);
                     coinDisplay.innerText = coins;
                 } catch (error) {
                     console.error("Error fetching wallet data:", error);

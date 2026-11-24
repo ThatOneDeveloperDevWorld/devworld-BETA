@@ -310,6 +310,7 @@
         }
     </style>
     <script src="i18n.js"></script>
+    <script src="dwpermissions.js"></script>
 </head>
 <body onload="initStudio()">
 
@@ -839,6 +840,9 @@
                     title: forkSource.title || ""
                 };
             }
+
+            // Dev Points check (below 90 you cannot publish games)
+            if (window.DWPerms && !(await DWPerms.guard('publish'))) return;
 
             try {
                 showToast("Publishing...");

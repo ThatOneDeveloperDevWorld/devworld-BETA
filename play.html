@@ -201,6 +201,7 @@
         }
     </style>
     <script src="i18n.js"></script>
+    <script src="dwcoins.js"></script>
 </head>
 <body>
 
@@ -495,24 +496,8 @@
                                     });
 
                                     if (creatorId) {
-                                        const creatorRef = db.collection("users").doc(creatorId);
-                                        const creatorDoc = await creatorRef.get();
-                                        if (creatorDoc.exists) {
-                                            const cData = creatorDoc.data();
-                                            if (cData.coins !== undefined) {
-                                                await creatorRef.update({
-                                                    coins: firebase.firestore.FieldValue.increment(1)
-                                                });
-                                            } else if (cData.DevCoins !== undefined) {
-                                                await creatorRef.update({
-                                                    DevCoins: firebase.firestore.FieldValue.increment(1)
-                                                });
-                                            } else {
-                                                await creatorRef.set({ coins: 1 }, { merge: true });
-                                            }
-                                        } else {
-                                            await creatorRef.set({ coins: 1 }, { merge: true });
-                                        }
+                                        // +1 Dev Coin for the creator (one shared field, see dwcoins.js)
+                                        await DWCoins.awardVisit(db, creatorId);
                                     }
                                 } catch (e) {
                                     console.log("Visit counter or coin update restricted", e);

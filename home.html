@@ -68,11 +68,15 @@
             padding: 12px 18px;
         }
 
-        .logo-img {
-            max-width: 120px;
-            width: 100%;
-            height: auto;
-            filter: drop-shadow(2px 2px 0px #000);
+        .wordmark {
+            font-size: 26px;
+            color: #000;
+            line-height: 1;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 12px;
         }
 
         .search-box {
@@ -305,8 +309,12 @@
         .btn-confirm { background: #55ff55; color: #000; }
     </style>
     <script src="i18n.js"></script>
+    <script src="dwpermissions.js"></script>
     <script src="dwcomments.js"></script>
     <script src="gamemenu.js"></script>
+    <script src="announcements/announcements-data.js"></script>
+    <script src="events/events-data.js"></script>
+    <script src="events.js"></script>
 </head>
 <body onload="initHome()">
 
@@ -314,7 +322,11 @@
 
     <div class="fullscreen-container">
         <div class="nav-row">
-            <img src="Devworldlogobeta.png" alt="Dev World" class="logo-img">
+            <div class="wordmark" data-no-i18n>Dev World</div>
+            <div class="top-actions">
+                <button type="button" id="announce-btn"></button>
+                <button type="button" id="events-btn"></button>
+            </div>
         </div>
 
         <div class="search-box">

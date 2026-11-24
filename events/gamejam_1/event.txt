@@ -1,0 +1,9 @@
+title: gamejam 1: ice showdown!
+description: Build a game about ice, use custom tiles! those help you get higher rankings. use github if you want, or use the example images in the app files. other image websites also work.
+order: 1
+banner: banner.png
+end: 2026-12-25 23:59 UTC
+background: #ffffff
+text: #000000
+accent: #5ce1e6
+button: enter the jam! | editor.html

@@ -1,0 +1,44 @@
+// ============================================================================
+//  EVENT TEMPLATE  -  copy this whole folder, rename the copy (no spaces), then edit.
+//  Folders whose name starts with  _  or  .  are ignored by the app (like this one).
+//  Lines starting with // are comments. After any change run:  node build-content.js
+// ============================================================================
+
+// The name shown in the Events menu. (required)
+title: Summer Build-Off
+// Translations are optional - add  title.es:  title.ja:  for Spanish / Japanese.
+title.es: Competencia de verano
+title.ja: サマービルドオフ
+
+// A short text under the title. It can use several lines: just keep typing on the next lines.
+description: Build a game about water and share it with everyone!
+Every game published during the event counts.
+description.es: ¡Crea un juego sobre el agua y compártelo con todos!
+description.ja: 水をテーマにしたゲームを作ってみんなに見せよう！
+
+// Position in the Events list. 1 is first, 2 is second, and so on. (events without a number go last)
+order: 1
+
+// The banner image. It must be inside this folder. Best size: 1200 x 400 px (3:1).
+// You can leave this line out if the file is called banner.png / banner.jpg / banner.gif / banner.webp
+banner: banner.png
+
+// When the event ends. No time zone means UTC. Examples:
+//   end: 2026-12-31                    (the END of that day, UTC)
+//   end: 2026-12-31 23:59              (UTC)
+//   end: 2026-12-31 18:00 -06:00       (a time zone offset)
+end: 2026-12-31 23:59 UTC
+
+// How the event card looks. Hex colours only (#rrggbb). All three are optional.
+background: #e7fbfc
+text: #000000
+accent: #5ce1e6
+
+// An optional button on the card:   button: Label | page-or-link
+button: Start building | editor.html
+button.es: Empezar a crear
+button.ja: 作り始める
+
+// Can creators enter their games in this event? on (default) shows the "Add a game" and "Entries"
+// buttons on the card, off hides them (use off for events that are only an announcement).
+entries: on

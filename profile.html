@@ -454,8 +454,11 @@
         }
     </style>
     <script src="i18n.js"></script>
+    <script src="dwpermissions.js"></script>
     <script src="dwcomments.js"></script>
     <script src="gamemenu.js"></script>
+    <script src="events/events-data.js"></script>
+    <script src="events.js"></script>
 </head>
 <body>
 
@@ -555,8 +558,9 @@
                 Loading...
             </div>
 
+
             <div class="dev-points-explanation" data-i18n-html="devpoints-explain">
-                these are your <b>dev points</b>. the lower you go, the more <b>restricted</b> you get.
+                these are your <b>dev points</b>.
             </div>
 
             <button class="btn-custom" style="background: #e9ecef; color: #000; margin-top: 15px; margin-bottom: 0;" onclick="closeDevPointsModal()">Close</button>
@@ -1068,7 +1072,7 @@
             }
         }
 
-        document.getElementById("save-btn").addEventListener("click", () => {
+        document.getElementById("save-btn").addEventListener("click", async () => {
             const user = firebase.auth().currentUser;
             if (user) {
                 const newUsername = document.getElementById("username-input").value;
@@ -1076,12 +1080,29 @@
                 const newPfpUrl = document.getElementById("pfp-url-input").value.trim();
                 const newProfileColor = document.getElementById("profile-color-input").value;
 
-                db.collection("users").doc(user.uid).set({
+                let profileData = {
                     Username: newUsername,
                     Bio: newBio,
                     pfpUrl: newPfpUrl,
                     profileColor: newProfileColor
-                }, { merge: true })
+                };
+
+                // Dev Points: below 90 the username, bio and picture are locked (the colour can still change)
+                if (window.DWPerms) {
+                    let st = null;
+                    try { st = await DWPerms.status(); } catch (e) { st = null; }
+                    if (st && st.banned) { await DWPerms.guard('editProfile'); return; }
+                    if (st && st.restricted) {
+                        const cur = currentUserData || {};
+                        const changed = newUsername !== (cur.Username || "") ||
+                                        newBio !== (cur.Bio || "") ||
+                                        newPfpUrl !== (cur.pfpUrl || "");
+                        if (changed) { await DWPerms.guard('editProfile'); return; }
+                        profileData = { profileColor: newProfileColor };
+                    }
+                }
+
+                db.collection("users").doc(user.uid).set(profileData, { merge: true })
                 .then(() => {
                     document.getElementById("welcome-user").innerText = newUsername;
                     document.getElementById("main-profile-container").style.backgroundColor = newProfileColor;

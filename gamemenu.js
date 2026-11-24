@@ -180,6 +180,7 @@
         ".dwgm-forked{margin-top:3px;font-size:12px;color:#555}",
         ".dwgm-desc{margin-top:12px;font-size:14px;line-height:1.4;color:#222;white-space:pre-wrap;word-break:break-word;font-family:Arial,Helvetica,sans-serif}",
         ".dwgm-dates{margin-top:10px;font-size:12px;color:#666;line-height:1.5}",
+        ".dwgm-events{margin-top:10px;padding:7px 10px;font-size:13px;line-height:1.4;color:#000;background:#e7fbfc;border:2px solid #000;border-radius:10px;word-break:break-word}",
         /* toast + report modal */
         ".dwgm-toast{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);display:none;max-width:90%;padding:8px 16px;font-size:13px;color:#fff;background:#000;border-radius:999px;z-index:40;text-align:center}",
         ".dwgm-modal{position:fixed;top:0;left:0;width:100%;height:100%;z-index:5100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.6)}",
@@ -222,6 +223,7 @@
                     '<div class="dwgm-menuwrap">' +
                       '<button type="button" class="dwgm-pill" id="dwgm-menubtn">' + T("Menu") + '</button>' +
                       '<div class="dwgm-dropdown" id="dwgm-dropdown">' +
+                        '<button type="button" class="dwgm-ditem" id="dwgm-add-event" style="display:none">' + T("Add to Event") + '</button>' +
                         '<button type="button" class="dwgm-ditem" id="dwgm-report-game">' + T("Report") + '</button>' +
                         '<button type="button" class="dwgm-ditem" id="dwgm-report-creator">' + T("Report Creator") + '</button>' +
                       '</div>' +
@@ -250,6 +252,7 @@
                     '</div>' +
                   '</div>' +
                   '<div class="dwgm-desc" id="dwgm-desc" data-no-i18n style="display:none"></div>' +
+                  '<div class="dwgm-events" id="dwgm-events" data-no-i18n style="display:none"></div>' +
                   '<div class="dwgm-dates" id="dwgm-dates"></div>' +
                   '<div id="dwgm-comments"></div>' +
                 '</div>' +
@@ -285,6 +288,11 @@
             var dd = $("dwgm-dropdown");
             if (dd.classList.contains("dwgm-active") && !e.target.closest(".dwgm-menuwrap")) dd.classList.remove("dwgm-active");
         });
+        $("dwgm-add-event").onclick = function () {
+            $("dwgm-dropdown").classList.remove("dwgm-active");
+            if (!S.gameId || !window.DWEvents || !DWEvents.addGame) return;
+            DWEvents.addGame(S.gameId, { onChange: function (ids) { if (S.game) { S.game.eventIds = ids; renderEventLine(); } } });
+        };
         $("dwgm-report-game").onclick = function () { openReport("game"); };
         $("dwgm-report-creator").onclick = function () { openReport("creator"); };
         $("dwgm-report-cancel").onclick = closeReport;
@@ -296,6 +304,7 @@
         $("dwgm-follow").onclick = toggleFollow;
         document.addEventListener("keydown", function (e) {
             if (e.key !== "Escape" || !S.open) return;
+            if (window.DWEvents && DWEvents.isOpen && DWEvents.isOpen()) return;   // the event window handles Escape first
             if ($("dwgm-report-modal").classList.contains("dwgm-active")) closeReport(); else close();
         });
     }
@@ -341,6 +350,7 @@
         $("dwgm-pfp").src = DEFAULT_PFP;
         $("dwgm-follow").style.display = "none";
         $("dwgm-forked").style.display = "none";
+        $("dwgm-events").style.display = "none";
         $("dwgm-dates").textContent = "";
         $("dwgm-desc").style.display = "none";
         $("dwgm-desc").textContent = "";
@@ -395,6 +405,8 @@
         dates.textContent = "";
         lines.forEach(function (l) { dates.appendChild(el("div", null, l)); });
 
+        renderEventLine();
+
         S.creatorId = g.authorId || g.creatorId || null;
         if (S.creatorId === "anonymous_dev") S.creatorId = null;
         var cname = $("dwgm-cname");
@@ -405,6 +417,23 @@
             cname.href = "userprofile.html?id=" + encodeURIComponent(S.creatorId);
             cname.onclick = function (e) { e.preventDefault(); window.location.href = cname.href; };
         }
+    }
+
+    // "In event: <title>" for every known event this game was entered in
+    function renderEventLine() {
+        var box = $("dwgm-events");
+        if (!box) return;
+        var ids = (S.game && Array.isArray(S.game.eventIds)) ? S.game.eventIds : [];
+        var known = Array.isArray(window.DW_EVENTS) ? window.DW_EVENTS : [];
+        var lang = (window.DWLang && DWLang.get) ? DWLang.get() : "en";
+        var names = [];
+        known.forEach(function (e) {
+            if (ids.indexOf(e.id) === -1) return;
+            var t = e.title;
+            names.push(!t ? e.id : (typeof t === "string" ? t : (t[lang] || t.en || e.id)));
+        });
+        box.textContent = names.length ? T("In event") + ": " + names.join(", ") : "";
+        box.style.display = names.length ? "block" : "none";
     }
 
     function loadCreator(token) {
@@ -437,6 +466,8 @@
 
         var fb = $("dwgm-follow");
         var mine = S.user && S.creatorId && S.user.uid === S.creatorId;
+        var canEvent = mine && window.DWEvents && DWEvents.addGame && Array.isArray(window.DW_EVENTS) && window.DW_EVENTS.length > 0;
+        $("dwgm-add-event").style.display = canEvent ? "" : "none";
         if (!S.creatorId || mine) {
             fb.style.display = "none";
         } else {

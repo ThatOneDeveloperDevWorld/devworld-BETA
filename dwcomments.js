@@ -272,17 +272,22 @@
             if (!text) return;
             if (Date.now() - inst.lastAt < COOLDOWN_MS) { alert("Please wait a few seconds."); return; }
             inst.sending = true; send.disabled = true;
-            col().add({
-                authorId: currentUser.uid,
-                text: text,
-                createdAt: FV().serverTimestamp(),
-                parentId: inst.replyTo ? inst.replyTo.parentId : null,
-                replyToAuthorId: inst.replyTo ? inst.replyTo.authorId : null
-            }).then(function () {
-                inst.lastAt = Date.now();
-                input.value = "";
-                clearReply();
-                return load();
+            // Dev Points check first (below 90 you cannot comment)
+            var allowed = window.DWPerms ? DWPerms.guard("comment") : Promise.resolve(true);
+            allowed.then(function (ok) {
+                if (!ok) return;
+                return col().add({
+                    authorId: currentUser.uid,
+                    text: text,
+                    createdAt: FV().serverTimestamp(),
+                    parentId: inst.replyTo ? inst.replyTo.parentId : null,
+                    replyToAuthorId: inst.replyTo ? inst.replyTo.authorId : null
+                }).then(function () {
+                    inst.lastAt = Date.now();
+                    input.value = "";
+                    clearReply();
+                    return load();
+                });
             }).catch(function (err) {
                 console.error("Comments: post failed", err);
                 alert("Failed to post comment.");

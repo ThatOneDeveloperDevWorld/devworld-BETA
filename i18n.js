@@ -376,6 +376,25 @@
         /* ---------- misc ---------- */
         "Fork": "Bifurcar",
         "Forked from": "Bifurcado de",
+        "Add a game": "Añadir un juego",
+        "Add to Event": "Añadir a un evento",
+        "Entries": "Participaciones",
+        "Remove": "Quitar",
+        "In event": "En el evento",
+        "In this event": "En este evento",
+        "Choose a game to enter in this event.": "Elige un juego para participar en este evento.",
+        "Choose an event for this game.": "Elige un evento para este juego.",
+        "You have no games yet.": "Aún no tienes juegos.",
+        "Create a game": "Crear un juego",
+        "Log in to enter a game.": "Inicia sesión para inscribir un juego.",
+        "No entries yet. Be the first!": "Aún no hay participaciones. ¡Sé el primero!",
+        "No events are open for entries right now.": "No hay eventos abiertos para participar ahora mismo.",
+        "Game added to the event!": "¡Juego añadido al evento!",
+        "Game removed from the event.": "Juego quitado del evento.",
+        "Could not update the game. Try again.": "No se pudo actualizar el juego. Inténtalo de nuevo.",
+        "Could not load games.": "No se pudieron cargar los juegos.",
+        "Could not load entries.": "No se pudieron cargar las participaciones.",
+        "You can only enter your own games.": "Solo puedes inscribir tus propios juegos.",
         "Forking:": "Bifurcando:",
         "Fork loaded!": "¡Fork cargado!",
         "Could not load the game to fork.": "No se pudo cargar el juego para bifurcar.",
@@ -426,13 +445,22 @@
         "Banner Preview": "Vista previa del banner",
         "Please fix your game banner URL or leave it blank.": "Corrige la URL del banner de tu juego o déjala en blanco.",
         "Game Description": "Descripción del juego",
-        "describe your game...": "describe tu juego..."
+        "describe your game...": "describe tu juego...",
+        "Announcements": "Anuncios",
+        "Events": "Eventos",
+        "No announcements yet.": "Aún no hay anuncios.",
+        "No events right now. Check back soon!": "No hay eventos por ahora. ¡Vuelve pronto!",
+        "Ends in": "Termina en",
+        "Ends": "Termina",
+        "Ended": "Finalizado",
+        "Past events": "Eventos pasados",
+        "New": "Nuevo"
     };
 
     /* Sentences that contain bold/inline markup: pages mark them with
        data-i18n-html="<english text>" and get this HTML when Spanish is on. */
     var ES_HTML = {
-        "devpoints-explain": "estos son tus <b>dev points</b>. cuanto más bajes, más <b>restringido</b> estarás.",
+        "devpoints-explain": "estos son tus <b>dev points</b>.",
         "delete-warning": "Advertencia: esta acción es permanente y <strong>no se puede deshacer</strong>. Todos tus datos se borrarán por completo.",
         "user-banned": "este usuario ha sido suspendido. ya no puede usar <b>dev world</b> con esta cuenta.",
         "ban-system": "A diferencia del servidor de Discord, Dev World <strong>NO</strong> usa un contador de advertencias. Las infracciones de estas normas conllevan directamente silenciamientos o suspensiones permanentes de la plataforma."
@@ -445,7 +473,12 @@
         [/^Post deleted by admin\. Author Dev Points reduced by (.+)\.$/, "Publicación eliminada por un admin. Se restaron $1 Dev Points al autor."],
         [/^Successfully updated Dev Points to (.+)\.$/, "Dev Points actualizados con éxito a $1."],
         [/^you have followed (.+)$/, "has seguido a $1"],
-        [/^Your account has been banned\. reason: dev points = (.+)\.$/, "Tu cuenta ha sido suspendida. motivo: dev points = $1."]
+        [/^Your account has been banned\. reason: dev points = (.+)\.$/, "Tu cuenta ha sido suspendida. motivo: dev points = $1."],
+        [/^Your Dev Points are (\d+)\. You need at least 90 to comment\.$/, "Tus Dev Points son $1. Necesitas al menos 90 para comentar."],
+        [/^Your Dev Points are (\d+)\. You need at least 90 to post\.$/, "Tus Dev Points son $1. Necesitas al menos 90 para hacer publicaciones."],
+        [/^Your Dev Points are (\d+)\. You need at least 90 to publish games\.$/, "Tus Dev Points son $1. Necesitas al menos 90 para publicar juegos."],
+        [/^Your Dev Points are (\d+)\. You need at least 90 to enter games in events\.$/, "Tus Dev Points son $1. Necesitas al menos 90 para inscribir juegos en eventos."],
+        [/^Your Dev Points are (\d+)\. You need at least 90 to change your username, bio or profile picture\.$/, "Tus Dev Points son $1. Necesitas al menos 90 para cambiar tu nombre de usuario, biografía o foto de perfil."]
     ];
 
     var JA = {
@@ -815,6 +848,25 @@
         /* ---------- misc ---------- */
         "Fork": "フォーク",
         "Forked from": "フォーク元:",
+        "Add a game": "ゲームを追加",
+        "Add to Event": "イベントに追加",
+        "Entries": "参加作品",
+        "Remove": "取り消す",
+        "In event": "参加イベント",
+        "In this event": "このイベントに参加中",
+        "Choose a game to enter in this event.": "このイベントに参加させるゲームを選んでください。",
+        "Choose an event for this game.": "このゲームを参加させるイベントを選んでください。",
+        "You have no games yet.": "まだゲームがありません。",
+        "Create a game": "ゲームを作る",
+        "Log in to enter a game.": "ゲームを参加させるにはログインしてください。",
+        "No entries yet. Be the first!": "まだ参加作品がありません。最初の参加者になろう！",
+        "No events are open for entries right now.": "現在、参加受付中のイベントはありません。",
+        "Game added to the event!": "ゲームをイベントに追加しました！",
+        "Game removed from the event.": "ゲームをイベントから外しました。",
+        "Could not update the game. Try again.": "ゲームを更新できませんでした。もう一度お試しください。",
+        "Could not load games.": "ゲームを読み込めませんでした。",
+        "Could not load entries.": "参加作品を読み込めませんでした。",
+        "You can only enter your own games.": "自分のゲームだけ参加させられます。",
         "Forking:": "フォーク中:",
         "Fork loaded!": "フォークを読み込みました！",
         "Could not load the game to fork.": "フォークするゲームを読み込めませんでした。",
@@ -865,11 +917,20 @@
         "Banner Preview": "バナーのプレビュー",
         "Please fix your game banner URL or leave it blank.": "ゲームバナーのURLを修正するか、空欄のままにしてください。",
         "Game Description": "ゲームの説明",
-        "describe your game...": "ゲームについて書いてみよう..."
+        "describe your game...": "ゲームについて書いてみよう...",
+        "Announcements": "お知らせ",
+        "Events": "イベント",
+        "No announcements yet.": "まだお知らせはありません。",
+        "No events right now. Check back soon!": "現在イベントはありません。また見に来てね！",
+        "Ends in": "終了まで",
+        "Ends": "終了",
+        "Ended": "終了しました",
+        "Past events": "過去のイベント",
+        "New": "新着"
     };
 
     var JA_HTML = {
-        "devpoints-explain": "これはあなたの<b>dev points</b>です。下がるほど<b>制限</b>が厳しくなります。",
+        "devpoints-explain": "これはあなたの<b>dev points</b>です。",
         "delete-warning": "警告: この操作は永久的で、<strong>元に戻すことはできません</strong>。すべてのデータが完全に削除されます。",
         "user-banned": "このユーザーはBANされました。このアカウントでは<b>dev world</b>を利用できません。",
         "ban-system": "Discordサーバーとは異なり、Dev World では警告回数を<strong>使いません</strong>。これらのルールに違反すると、ミュートまたはプラットフォームからの永久BANに直接つながります。"
@@ -881,7 +942,12 @@
         [/^Post deleted by admin\. Author Dev Points reduced by (.+)\.$/, "管理者が投稿を削除しました。作者の Dev Points が$1減りました。"],
         [/^Successfully updated Dev Points to (.+)\.$/, "Dev Points を$1に更新しました。"],
         [/^you have followed (.+)$/, "$1 をフォローしました"],
-        [/^Your account has been banned\. reason: dev points = (.+)\.$/, "あなたのアカウントはBANされました。理由: dev points = $1。"]
+        [/^Your account has been banned\. reason: dev points = (.+)\.$/, "あなたのアカウントはBANされました。理由: dev points = $1。"],
+        [/^Your Dev Points are (\d+)\. You need at least 90 to comment\.$/, "あなたの Dev Points は$1です。コメントするには90以上が必要です。"],
+        [/^Your Dev Points are (\d+)\. You need at least 90 to post\.$/, "あなたの Dev Points は$1です。投稿するには90以上が必要です。"],
+        [/^Your Dev Points are (\d+)\. You need at least 90 to publish games\.$/, "あなたの Dev Points は$1です。ゲームを公開するには90以上が必要です。"],
+        [/^Your Dev Points are (\d+)\. You need at least 90 to enter games in events\.$/, "あなたの Dev Points は$1です。イベントにゲームを参加させるには90以上が必要です。"],
+        [/^Your Dev Points are (\d+)\. You need at least 90 to change your username, bio or profile picture\.$/, "あなたの Dev Points は$1です。ユーザー名、自己紹介、プロフィール画像を変更するには90以上が必要です。"]
     ];
 
     var DICTS = { es: ES, ja: JA };
